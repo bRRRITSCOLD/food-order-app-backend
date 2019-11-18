@@ -1,0 +1,80 @@
+version: "3"
+
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4568-4576:4568-4576"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=${SERVICES-ssm,kinesis,dynamodb,dynamodbstreams }
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-docker }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/private${TMPDIR}:/tmp/localstack"
+
+  setup-resources:
+    image: mesosphere/aws-cli
+    volumes:
+      - ./dev_env:/project/dev_env
+    environment:
+      - AWS_ACCESS_KEY_ID=dummyaccess
+      - AWS_SECRET_ACCESS_KEY=dummysecret
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: /bin/sh -c
+    command: >
+      "
+        # Needed so all localstack components will startup correctly (i'm sure there's a better way to do this)
+        sleep 10;
+
+        aws dynamodb create-table \
+          --endpoint-url=http://localstack:4569 \
+          --region us-east-1 \
+          --table-name products \
+          --attribute-definitions AttributeName=productId,AttributeType=S \
+          --key-schema AttributeName=productId,KeyType=HASH \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5;
+
+        aws dynamodb create-table \
+          --endpoint-url=http://localstack:4569 \
+          --region us-east-1 \
+          --table-name ingredients \
+          --attribute-definitions AttributeName=ingredientId,AttributeType=S \
+          --key-schema AttributeName=ingredientId,KeyType=HASH \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5;
+
+        aws dynamodb create-table \
+          --endpoint-url=http://localstack:4569 \
+          --region us-east-1 \
+          --table-name orders \
+          --attribute-definitions AttributeName=orderId,AttributeType=S \
+          --key-schema AttributeName=orderId,KeyType=HASH \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5;
+
+        aws dynamodb create-table \
+          --endpoint-url=http://localstack:4569 \
+          --region us-east-1 \
+          --table-name menus \
+          --attribute-definitions AttributeName=menuId,AttributeType=S \
+          --key-schema AttributeName=menuId,KeyType=HASH \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5;
+
+        aws dynamodb create-table \
+          --endpoint-url=http://localstack:4569 \
+          --region us-east-1 \
+          --table-name users \
+          --attribute-definitions AttributeName=userId,AttributeType=S \
+          --key-schema AttributeName=userId,KeyType=HASH \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5;
+
+        # aws kinesis create-stream --endpoint-url=http://localstack:4568 --stream-name my_stream --shard-count 1;
+        # aws sqs create-queue --endpoint-url=http://localstack:4576 --queue-name my_queue;
+        # you can go on and put initial items in tables...
+      "
+    depends_on:
+      - localstack

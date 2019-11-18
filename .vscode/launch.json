@@ -1,0 +1,48 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Order API",
+      "args": ["${workspaceFolder}/src/app.ts", "--resolvers=/api/order/**/*.resolver.ts"],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Menu API",
+      "args": ["${workspaceFolder}/src/app.ts", "--resolvers=/api/menu/**/*.resolver.ts"],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Current Unit/Integration Test",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+          "-r",
+          "ts-node/register",
+          "--timeout",
+          "999999",
+          "--colors",
+          "${relativeFile}",
+      ],
+      "env": { "NODE_ENV": "LOCAL" },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "protocol": "inspector"
+    }
+  ]
+}
