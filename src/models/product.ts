@@ -10,16 +10,15 @@ import { uuid } from 'uuidv4';
 
 // decorators
 import { ScopeAuthorization } from '../decorators';
-import { dynamoDb } from '../lib/aws';
 
 // libs
-
+import { dynamoDb } from '../lib/aws';
 
 /**
  *
  *
  * @export
- * @interface MenuItemInterface
+ * @interface ProductInterface
  */
 export interface ProductInterface {
   productId: string;
