@@ -85,21 +85,21 @@ describe('Product Models Integration Tests', () => {
           /////////////////////////
           // initiate holder for current
           // product object/object instance
-          let product;
+          let putProduct;
           // execute function to be tested
-          product = await Product.putOne(products[0]);
+          putProduct = await Product.putOne(products[0]);
           // run first batch of
           // test assertions
-          expect(product instanceof EXPECTED_PRODUCT_INSTANCE).to.be.true;
-          expect(product.productId !== undefined).to.be.true;
-          expect(product.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
-          expect(product.name !== undefined).to.be.true;
-          expect(product.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(product.price !== undefined).to.be.true;
-          expect(product.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
-          expect(product.ingredients !== undefined).to.be.true;
-          expect(product.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          expect(product.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
+          expect(putProduct instanceof EXPECTED_PRODUCT_INSTANCE).to.be.true;
+          expect(putProduct.productId !== undefined).to.be.true;
+          expect(putProduct.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
+          expect(putProduct.name !== undefined).to.be.true;
+          expect(putProduct.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
+          expect(putProduct.price !== undefined).to.be.true;
+          expect(putProduct.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
+          expect(putProduct.ingredients !== undefined).to.be.true;
+          expect(putProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+          expect(putProduct.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
 
           // scan dynamo for the created
           // product item
@@ -112,41 +112,53 @@ describe('Product Models Integration Tests', () => {
           }).promise();
           // store reference to possibly retrieved
           // dynamodb item - to be used for testing
-          product = _.get(dynamoDbScanResponse, 'Items[0]');
+          putProduct = _.get(dynamoDbScanResponse, 'Items[0]');
           // run second batch of
           // test assertions
-          expect(product.productId !== undefined).to.be.true;
-          expect(product.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
-          expect(product.name !== undefined).to.be.true;
-          expect(product.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(product.price !== undefined).to.be.true;
-          expect(product.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
-          expect(product.ingredients !== undefined).to.be.true;
-          expect(product.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          expect(product.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
+          expect(putProduct.productId !== undefined).to.be.true;
+          expect(putProduct.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
+          expect(putProduct.name !== undefined).to.be.true;
+          expect(putProduct.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
+          expect(putProduct.price !== undefined).to.be.true;
+          expect(putProduct.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
+          expect(putProduct.ingredients !== undefined).to.be.true;
+          expect(putProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+          expect(putProduct.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
 
           /////////////////////////
           //////// teardown ///////
           /////////////////////////
           // delete possible reference
           // to mock product inside dynamodb table
-          await dynamoDb.documentClient.delete({
-            TableName: 'products',
-            Key:{
-              productId: products[0].productId
-            }
-          }).promise();
-
+          const dynamoDbDeleteTasks: any[] = [];
+          for (let i = 0; i < products.length; i++) {
+            dynamoDbDeleteTasks.push(
+              dynamoDb.documentClient.delete({
+                TableName: 'products',
+                Key:{
+                  productId: products[i].productId
+                }
+              }).promise()
+            )
+          }
+          await Promise.all(dynamoDbDeleteTasks);
+          // return explicily
           return;
         } catch (error) {
           // delete possible reference
           // to mock product inside dynamodb table
-          await dynamoDb.documentClient.delete({
-            TableName: 'products',
-            Key:{
-              productId: products[0].productId
-            }
-          }).promise();
+          const dynamoDbDeleteTasks: any[] = [];
+          for (let i = 0; i < products.length; i++) {
+            dynamoDbDeleteTasks.push(
+              dynamoDb.documentClient.delete({
+                TableName: 'products',
+                Key:{
+                  productId: products[i].productId
+                }
+              }).promise()
+            )
+          }
+          await Promise.all(dynamoDbDeleteTasks);
           // throw explicitly
           throw error;
         }
@@ -154,15 +166,27 @@ describe('Product Models Integration Tests', () => {
     });
 
     describe('#fetchManyByProductIds', () => {
-      it('- should', async () => {
+      it('- should retrieve all products that correlate to the passed in productIds', async () => {
         try {
           /////////////////////////
           ///////// setup /////////
           /////////////////////////
+          // insert all mock products
+          const putResponse = await dynamoDb.documentClient.batchWrite({
+            RequestItems: {
+              'products': products.map((product: any) => {
+                return {
+                  PutRequest: {
+                    Item: { ...product }
+                  }
+                }
+              })
+            }
+          }).promise();
           // store expected values for
           // testing purposes/ease
           const EXPECTED_PRODUCT_INSTANCE = Product;
-          const EXPECTED_PRODUCT_OBJECT = { ...products[0] };
+          const EXPECTED_PRODUCT_OBJECTS = [...products];
           const EXPECTED_ARRAY_INSTANCE = Array;
 
           /////////////////////////
@@ -170,68 +194,67 @@ describe('Product Models Integration Tests', () => {
           /////////////////////////
           // initiate holder for current
           // product object/object instance
-          let product;
+          let fetchedProducts: any[];
           // execute function to be tested
-          product = await Product.putOne(products[0]);
+          fetchedProducts = await Product.fetchManyByProductIds(
+            products.map((product: any) => product.productId)
+          );
           // run first batch of
           // test assertions
-          expect(product instanceof EXPECTED_PRODUCT_INSTANCE).to.be.true;
-          expect(product.productId !== undefined).to.be.true;
-          expect(product.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
-          expect(product.name !== undefined).to.be.true;
-          expect(product.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(product.price !== undefined).to.be.true;
-          expect(product.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
-          expect(product.ingredients !== undefined).to.be.true;
-          expect(product.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          expect(product.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
-
-          // scan dynamo for the created
-          // product item
-          const dynamoDbScanResponse = await dynamoDb.documentClient.scan({
-            TableName : "products",
-            FilterExpression : `productId IN (:productId1)`,
-            ExpressionAttributeValues : {
-              ':productId1': EXPECTED_PRODUCT_OBJECT.productId
-            }
-          }).promise();
-          // store reference to possibly retrieved
-          // dynamodb item - to be used for testing
-          product = _.get(dynamoDbScanResponse, 'Items[0]');
-          // run second batch of
-          // test assertions
-          expect(product.productId !== undefined).to.be.true;
-          expect(product.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
-          expect(product.name !== undefined).to.be.true;
-          expect(product.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(product.price !== undefined).to.be.true;
-          expect(product.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
-          expect(product.ingredients !== undefined).to.be.true;
-          expect(product.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          expect(product.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
+          expect(fetchedProducts instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+          expect(fetchedProducts.length === EXPECTED_PRODUCT_OBJECTS.length).to.be.true;
+          for (let i = 0; i < fetchedProducts.length; i++) {
+            const foundExpectedProduct: any = EXPECTED_PRODUCT_OBJECTS.find(
+              (expectedProductObject: any) =>
+                expectedProductObject.productId === fetchedProducts[i].productId
+            )
+            expect(foundExpectedProduct !== undefined).to.be.true;
+            expect(fetchedProducts[i] instanceof EXPECTED_PRODUCT_INSTANCE).to.be.true;
+            expect(fetchedProducts[i].productId !== undefined).to.be.true;
+            expect(fetchedProducts[i].productId === foundExpectedProduct.productId).to.be.true;
+            expect(fetchedProducts[i].name !== undefined).to.be.true;
+            expect(fetchedProducts[i].name === foundExpectedProduct.name).to.be.true;
+            expect(fetchedProducts[i].price !== undefined).to.be.true;
+            expect(fetchedProducts[i].price === foundExpectedProduct.price).to.be.true;
+            expect(fetchedProducts[i].ingredients !== undefined).to.be.true;
+            expect(fetchedProducts[i].ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+            expect(fetchedProducts[i].ingredients.length === foundExpectedProduct.ingredients.length).to.be.true;
+          }
 
           /////////////////////////
           //////// teardown ///////
           /////////////////////////
           // delete possible reference
           // to mock product inside dynamodb table
-          await dynamoDb.documentClient.delete({
-            TableName: 'products',
-            Key:{
-              productId: products[0].productId
-            }
-          }).promise();
-
+          const dynamoDbDeleteTasks: any[] = [];
+          for (let i = 0; i < products.length; i++) {
+            dynamoDbDeleteTasks.push(
+              dynamoDb.documentClient.delete({
+                TableName: 'products',
+                Key:{
+                  productId: products[i].productId
+                }
+              }).promise()
+            )
+          }
+          await Promise.all(dynamoDbDeleteTasks);
+          // return explicitly
           return;
         } catch (error) {
           // delete possible reference
           // to mock product inside dynamodb table
-          await dynamoDb.documentClient.delete({
-            TableName: 'products',
-            Key:{
-              productId: products[0].productId
-            }
-          }).promise();
+          const dynamoDbDeleteTasks: any[] = [];
+          for (let i = 0; i < products.length; i++) {
+            dynamoDbDeleteTasks.push(
+              dynamoDb.documentClient.delete({
+                TableName: 'products',
+                Key:{
+                  productId: products[i].productId
+                }
+              }).promise()
+            )
+          }
+          await Promise.all(dynamoDbDeleteTasks);
           // throw explicitly
           throw error;
         }
