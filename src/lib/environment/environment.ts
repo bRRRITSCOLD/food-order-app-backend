@@ -1,147 +1,9 @@
 // node_modules
-import { inherits } from 'util';
 import * as _ from 'lodash';
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as dontenvSafe from 'dotenv-safe';
-
-/**
- *
- *
- * @interface MissingEnvVarsErrorConstructorRequestInterface
- */
-interface MissingEnvVarsErrorConstructorRequestInterface {
-
-  /**
-   * This property allows a usr to define a
-   * custom env example path - if one is not
-   * given it is defaulted .env.example
-   * @type {string}
-   * @memberof MissingEnvVarsErrorConstructorRequestInterface
-   */
-  exampleFilename: string;
-
-  /**
-   * array of string names of
-   * the missing env vars
-   * @type {string[]}
-   * @memberof MissingEnvVarsErrorConstructorRequestInterface
-   */
-  missingVars: string[];
-
-  /**
-   *
-   *
-   * @type {string}
-   * @memberof MissingEnvVarsErrorConstructorRequestInterface
-   */
-  dotenvFilename: string;
-
-  /**
-   *
-   *
-   * @type {boolean}
-   * @memberof MissingEnvVarsErrorConstructorRequestInterface
-   */
-  allowEmptyValues: boolean;
-
-  /**
-   *
-   *
-   * @type {Error}
-   * @memberof MissingEnvVarsErrorConstructorRequestInterface
-   */
-  error: Error;
-}
-
-interface MissingEnvVarsErrorInterface {
-
-  /**
-   *
-   *
-   * @type {string}
-   * @memberof MissingEnvVarsErrorInterface
-   */
-  name: string;
-
-  /**
-   *
-   *
-   * @type {string[]}
-   * @memberof MissingEnvVarsErrorInterface
-   */
-  missing: string[];
-
-  /**
-   *
-   *
-   * @type {string}
-   * @memberof MissingEnvVarsErrorInterface
-   */
-  example: string;
-} 
-
-/**
- *
- *
- * @class MissingEnvVarsError
- * @implements {MissingEnvVarsErrorInterface}
- */
-class MissingEnvVarsError implements MissingEnvVarsErrorInterface {
-
-  /**
-   *
-   *
-   * @type {string}
-   * @memberof MissingEnvVarsError
-   */
-  public name: string;
-
-  /**
-   *
-   *
-   * @type {string[]}
-   * @memberof MissingEnvVarsError
-   */
-  public missing: string[];
-
-  /**
-   *
-   *
-   * @type {string}
-   * @memberof MissingEnvVarsError
-   */
-  public example: string;
-
-  /**
-   * Creates an instance of MissingEnvVarsError.
-   * @param {MissingEnvVarsErrorConstructorRequestInterface} missingEnvVarsErrorConstructorRequest
-   * @memberof MissingEnvVarsError
-   */
-  constructor(missingEnvVarsErrorConstructorRequest: MissingEnvVarsErrorConstructorRequestInterface) {
-    Error.call(this)
-    // assign properties
-    Object.assign(this, {
-      ...missingEnvVarsErrorConstructorRequest,
-      name: this.constructor.name,
-      example: missingEnvVarsErrorConstructorRequest.exampleFilename,
-      missing: missingEnvVarsErrorConstructorRequest.missingVars,
-      message: [
-        `Missing process environment variables defined in ${missingEnvVarsErrorConstructorRequest.exampleFilename}:\n  ${missingEnvVarsErrorConstructorRequest.missingVars.join(', ')}`,
-        missingEnvVarsErrorConstructorRequest.error
-          ? `Additional error when reading environment variables defined in ${missingEnvVarsErrorConstructorRequest.exampleFilename}:\n${missingEnvVarsErrorConstructorRequest.error.message}`
-          : ''
-      ]
-        .filter(Boolean)
-        .join('\n\n')
-    });
-    // create stack
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-inherits(MissingEnvVarsError, Error);
 
 /**
  *
@@ -341,13 +203,12 @@ class Environment {
             }
           }
         }
-      } else {
-        dontenvSafe.config({
-          example: envExamplePath
-        });
       }
-      // TODO: Implement verifying all defined env vars are set
-      console.log('TODO: Implement verifying all defined env vars are set')
+      // check env and verify
+      // it is set correctly
+      dontenvSafe.config({
+        example: envExamplePath
+      });
       // return explicity
       return;
     } catch (error) {
@@ -360,7 +221,5 @@ class Environment {
 // export
 export {
   Environment,
-  LoadRequestInterface,
-  MissingEnvVarsErrorInterface,
-  MissingEnvVarsError
+  LoadRequestInterface
 };
