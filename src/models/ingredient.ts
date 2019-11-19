@@ -149,7 +149,7 @@ export class Ingredient implements IngredientInterface {
       // to the passed in ingredientIds
       const ingredientsScanReseponse = await dynamoDb.documentClient.scan({
         TableName : 'ingredients',
-        FilterExpression : 'ingredientId IN (' + Object.keys(expressionAttributeValues).toString() + ')',
+        FilterExpression : `ingredientId IN (${Object.keys(expressionAttributeValues).toString()})`,
         ExpressionAttributeValues : expressionAttributeValues
       }).promise();
       console.log(`[DEBUG] - {}Ingredient::#fetchManyByIngredientIds::successfully executed`);

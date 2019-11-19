@@ -57,13 +57,11 @@ describe('Product Models Integration Tests', () => {
       {
         productId: uuid(),
         name: 'Hamburger',
-        price: 5.15,
         ingredients: []
       },
       {
         productId: uuid(),
         name: 'Raspberry White Chocolate Cheesecake',
-        price: 5.15,
         ingredients: []
       }
     ];
@@ -95,8 +93,6 @@ describe('Product Models Integration Tests', () => {
           expect(putProduct.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
           expect(putProduct.name !== undefined).to.be.true;
           expect(putProduct.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(putProduct.price !== undefined).to.be.true;
-          expect(putProduct.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
           expect(putProduct.ingredients !== undefined).to.be.true;
           expect(putProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
           expect(putProduct.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
@@ -119,8 +115,6 @@ describe('Product Models Integration Tests', () => {
           expect(putProduct.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
           expect(putProduct.name !== undefined).to.be.true;
           expect(putProduct.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(putProduct.price !== undefined).to.be.true;
-          expect(putProduct.price === EXPECTED_PRODUCT_OBJECT.price).to.be.true;
           expect(putProduct.ingredients !== undefined).to.be.true;
           expect(putProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
           expect(putProduct.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;

@@ -152,7 +152,7 @@ export class Product implements ProductInterface {
       // to the passed in productIds
       const productsScanReseponse = await dynamoDb.documentClient.scan({
         TableName : 'products',
-        FilterExpression : 'productId IN (' + Object.keys(expressionAttributeValues).toString() + ')',
+        FilterExpression : `productId IN (${Object.keys(expressionAttributeValues).toString()})`,
         ExpressionAttributeValues : expressionAttributeValues
       }).promise();
       console.log(`[DEBUG] - {}Product::#fetchManyByProductIds::successfully executed`);
