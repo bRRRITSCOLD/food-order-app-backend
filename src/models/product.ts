@@ -13,6 +13,7 @@ import { ScopeAuthorization } from '../decorators';
 
 // libs
 import { dynamoDb } from '../lib/aws';
+import { Ingredient, IngredientInterface } from './ingredient';
 
 /**
  *
@@ -23,8 +24,8 @@ import { dynamoDb } from '../lib/aws';
 export interface ProductInterface {
   productId: string;
   name: string;
-  price: number;
-  ingredients: string[] | any[];
+  ingredients: IngredientInterface[];
+  totalPrice?: number;
 }
 
 /**
@@ -34,7 +35,7 @@ export interface ProductInterface {
  * @class MenuItem
  * @implements {MenuItemInterface}
  */
-@ObjectType({ description: 'Menu Item Model' })
+@ObjectType({ description: 'pRODUCT Model' })
 export class Product implements ProductInterface {
   /**
    *
@@ -59,22 +60,28 @@ export class Product implements ProductInterface {
   /**
    *
    *
-   * @type {number}
-   * @memberof MenuItem
-   */
-  @ScopeAuthorization(['*'])
-  @Field({ nullable: true })
-  public price: number;
-
-  /**
-   *
-   *
    * @type {(string[] | any[])}
    * @memberof MenuItem
    */
   @ScopeAuthorization(['*'])
-  @Field((_type: any) => [String], { nullable: true })
-  public ingredients: string[];
+  @Field(_type => [Ingredient], { nullable: true })
+  public ingredients: Ingredient[];
+
+  /**
+   *
+   *
+   * @readonly
+   * @type {number}
+   * @memberof Product
+   */
+  @ScopeAuthorization(['*'])
+  @Field({ nullable: true })
+  public get totalPrice(): number {
+    return this.ingredients.reduce((totalPrice: number, curr: Ingredient) => {
+      totalPrice = totalPrice + (curr.price * _.get(curr, 'quantity', 0));
+      return totalPrice;
+    }, 0);
+  }
 
   /**
    * Creates an instance of MenuItem.
@@ -84,17 +91,17 @@ export class Product implements ProductInterface {
   public constructor(product: ProductInterface) {
     this.productId = _.get(product, 'productId', uuid());
     this.name = _.get(product, 'name', '');
-    this.price = _.get(product, 'price', 0);
-    this.ingredients = _.get(product, 'ingredients', []);
+    this.ingredients = _.get(product, 'ingredients', [] as IngredientInterface[])
+      .map((ingredient: IngredientInterface) => new Ingredient(ingredient));
   }
 
   /**
    *
    *
    * @static
-   * @param {MenuItemInterface} menuItem
-   * @returns {Promise<MenuItem>}
-   * @memberof MenuItem
+   * @param {ProductInterface} product
+   * @returns {Promise<Product>}
+   * @memberof Product
    */
   public static async putOne(product: ProductInterface): Promise<Product> {
     try {
@@ -119,6 +126,14 @@ export class Product implements ProductInterface {
     }
   }
 
+  /**
+   *
+   *
+   * @static
+   * @param {string[]} productIds
+   * @returns {Promise<Product[]>}
+   * @memberof Product
+   */
   public static async fetchManyByProductIds(productIds: string[]): Promise<Product[]> {
     try {
       console.log(`[DEBUG] - {}Product::#fetchManyByProductIds::initiating execution`);
@@ -133,8 +148,8 @@ export class Product implements ProductInterface {
       // for the given products that correlate
       // to the passed in productIds
       const productsScanReseponse = await dynamoDb.documentClient.scan({
-        TableName : "products",
-        FilterExpression : "productId IN ("+Object.keys(expressionAttributeValues).toString()+ ")",
+        TableName : 'products',
+        FilterExpression : 'productId IN (' + Object.keys(expressionAttributeValues).toString() + ')',
         ExpressionAttributeValues : expressionAttributeValues
       }).promise();
       console.log(`[DEBUG] - {}Product::#fetchManyByProductIds::successfully executed`);

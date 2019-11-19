@@ -23,9 +23,9 @@ import { dynamoDb } from '../lib/aws';
 export interface IngredientInterface {
   ingredientId: string;
   name: string;
-  quantity: number;
-  quantityMeasurement: string
+  measurementUnit: string
   price: number;
+  quantity?: number;
 }
 
 /**
@@ -61,22 +61,12 @@ export class Ingredient implements IngredientInterface {
   /**
    *
    *
-   * @type {number}
-   * @memberof Ingredient
-   */
-  @ScopeAuthorization(['*'])
-  @Field({ nullable: true })
-  public quantity: number;
-
-  /**
-   *
-   *
    * @type {string}
    * @memberof Ingredient
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public quantityMeasurement: string;
+  public measurementUnit: string;
 
   /**
    *
@@ -89,14 +79,28 @@ export class Ingredient implements IngredientInterface {
   public price: number;
 
   /**
+   *
+   *
+   * @type {number}
+   * @memberof Ingredient
+   */
+  @ScopeAuthorization(['*'])
+  @Field({ nullable: true })
+  public quantity?: number;
+
+  /**
    * Creates an instance of Ingredient.
    * @param {IngredientInterface} ingredient
    * @memberof Ingredient
    */
   public constructor(ingredient: IngredientInterface) {
-    this.ingredientId = _.get(ingredient, 'ingredientId', uuid());
-    this.name = _.get(ingredient, 'name', '');
-    this.price = _.get(ingredient, 'price', 0);
+    Object.assign(this, {
+      ...ingredient,
+      ingredientId: _.get(ingredient, 'ingredientId', uuid()),
+      name: _.get(ingredient, 'name', uuid()),
+      measurementUnit: _.get(ingredient, 'measurementUnit'),
+      quantity: _.get(ingredient, 'quantity'),
+    });
   }
 
   /**
@@ -117,7 +121,7 @@ export class Ingredient implements IngredientInterface {
       // put/create/update the item in the
       // ingredients dyanmodb table
       const putResponse = await dynamoDb.documentClient.put({
-        TableName: 'products',
+        TableName: 'ingredients',
         Item: { ...newIngredient }
       }).promise();
       console.log(`[DEBUG] - {}Ingredient::#putOne::successfully executed`);
@@ -144,11 +148,11 @@ export class Ingredient implements IngredientInterface {
       // for the given ingredients that correlate
       // to the passed in ingredientIds
       const ingredientsScanReseponse = await dynamoDb.documentClient.scan({
-        TableName : "ingredients",
-        FilterExpression : "ingredientId IN ("+Object.keys(expressionAttributeValues).toString()+ ")",
+        TableName : 'ingredients',
+        FilterExpression : 'ingredientId IN (' + Object.keys(expressionAttributeValues).toString() + ')',
         ExpressionAttributeValues : expressionAttributeValues
       }).promise();
-      console.log(`[DEBUG] - {}Product::#fetchManyByIngredientIds::successfully executed`);
+      console.log(`[DEBUG] - {}Ingredient::#fetchManyByIngredientIds::successfully executed`);
       // take the response and map the found/scanned
       // items into a new array Ingredient instances
       return ingredientsScanReseponse.Items!.map((ingredient: any) => {
