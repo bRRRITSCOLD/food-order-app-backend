@@ -89,10 +89,13 @@ export class Product implements ProductInterface {
    * @memberof MenuItem
    */
   public constructor(product: ProductInterface) {
-    this.productId = _.get(product, 'productId', uuid());
-    this.name = _.get(product, 'name', '');
-    this.ingredients = _.get(product, 'ingredients', [] as IngredientInterface[])
-      .map((ingredient: IngredientInterface) => new Ingredient(ingredient));
+    Object.assign(this, {
+      ...product,
+      productId: _.get(product, 'productId', uuid()),
+      name: _.get(product, 'name', ''),
+      ingredients: _.get(product, 'ingredients', [] as IngredientInterface[])
+        .map((ingredient: IngredientInterface) => new Ingredient(ingredient)),
+    });
   }
 
   /**
