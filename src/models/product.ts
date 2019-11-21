@@ -32,10 +32,10 @@ export interface ProductInterface {
  *
  *
  * @export
- * @class MenuItem
- * @implements {MenuItemInterface}
+ * @class Product
+ * @implements {ProductInterface}
  */
-@ObjectType({ description: 'pRODUCT Model' })
+@ObjectType({ description: 'Product Model' })
 export class Product implements ProductInterface {
   /**
    *
@@ -76,10 +76,10 @@ export class Product implements ProductInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public get totalPrice(): number {
-    return this.ingredients.reduce((totalPrice: number, curr: Ingredient) => {
-      totalPrice = totalPrice + (curr.price * _.get(curr, 'quantity', 0));
-      return totalPrice;
+  public get totalIngredientPrice(): number {
+    return this.ingredients.reduce((totalIngredientPrice: number, curr: Ingredient) => {
+      totalIngredientPrice = totalIngredientPrice + (curr.price * _.get(curr, 'quantity', 0));
+      return totalIngredientPrice;
     }, 0);
   }
 

@@ -112,25 +112,25 @@ describe('Product Models Unit Tests', () => {
       });
     });
 
-    describe('get #totalPrice', () => {
-      it(`- should calculate the total price of the entire product`, async () => {
+    describe('get #totalIngredintPrice', () => {
+      it(`- should calculate the total price for all ingredients in the entire product`, async () => {
         try {
           /////////////////////////
           ///////// setup /////////
           /////////////////////////
           // store expected values for
           // testing purposes/ease
-          const EXPECTED_PRODUCT_TOTAL_PRICE = 2.025;
+          const EXPECTED_PRODUCT_TOTAL_INGREDIENT_PRICE = 2.025;
 
           /////////////////////////
           ////////// test /////////
           /////////////////////////
           // execute function to be tested
-          const totalPrice = new Product(product).totalPrice;
+          const totalIngredientPrice = new Product(product).totalIngredientPrice;
 
           // run first batch of
           // test assertions
-          expect(totalPrice === EXPECTED_PRODUCT_TOTAL_PRICE).to.be.true;
+          expect(totalIngredientPrice === EXPECTED_PRODUCT_TOTAL_INGREDIENT_PRICE).to.be.true;
 
           /////////////////////////
           //////// teardown ///////
