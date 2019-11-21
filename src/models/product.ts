@@ -13,6 +13,8 @@ import { ScopeAuthorization } from '../decorators';
 
 // libs
 import { dynamoDb } from '../lib/aws';
+
+// models
 import { Ingredient, IngredientInterface } from './ingredient';
 
 /**
