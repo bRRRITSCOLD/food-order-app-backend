@@ -40,28 +40,42 @@ describe('Product Models Unit Tests', () => {
     // this test
     const product = {
       productId: uuid(),
-      name: 'Cheeseburger',
-      ingredients: [
+      productName: 'Cheeseburger',
+      productIngredients: [
         {
           ingredientId: uuid(),
-          name: 'Raw Hamburger',
-          price: 1.25,
-          measurementUnit: 'LB',
-          quantity: .5
+          ingredientName: 'Raw Hamburger',
+          ingredientPrice: 1.25,
+          ingredientMeasurementUnit: 'LB',
+          ingredientQuantity: .5
         },
         {
           ingredientId: uuid(),
-          name: 'Hamburger Bun',
-          price: .70,
-          measurementUnit: 'PER',
-          quantity: 1
+          ingredientName: 'Salt',
+          ingredientPrice: .30,
+          ingredientMeasurementUnit: 'G',
+          ingredientQuantity: 3
         },
         {
           ingredientId: uuid(),
-          name: 'Cheese Slice',
-          price: .70,
-          measurementUnit: 'PER',
-          quantity: 1
+          ingredientName: 'Pepper',
+          ingredientPrice: .70,
+          ingredientMeasurementUnit: 'PER',
+          ingredientQuantity: 1
+        },
+        {
+          ingredientId: uuid(),
+          ingredientName: 'Hamburger Bun',
+          ingredientPrice: .70,
+          ingredientMeasurementUnit: 'PER',
+          ingredientQuantity: 1
+        },
+        {
+          ingredientId: uuid(),
+          ingredientName: 'Cheese Slice',
+          ingredientPrice: .70,
+          ingredientMeasurementUnit: 'PER',
+          ingredientQuantity: 1
         }
       ]
     };
@@ -92,12 +106,12 @@ describe('Product Models Unit Tests', () => {
             newProduct.productId === EXPECTED_PRODUCT_OBJECT.productId
           ).to.be.true;
           expect(
-            newProduct.name !== undefined &&
-            newProduct.name === EXPECTED_PRODUCT_OBJECT.name
+            newProduct.productName !== undefined &&
+            newProduct.productName === EXPECTED_PRODUCT_OBJECT.productName
           ).to.be.true;
-          expect(newProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          for (let i = 0; i < newProduct.ingredients.length; i++)
-            expect(newProduct.ingredients[i] instanceof EXPECTED_INGREDIENT_INSTANCE).to.be.true;
+          expect(newProduct.productIngredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+          for (let i = 0; i < newProduct.productIngredients.length; i++)
+            expect(newProduct.productIngredients[i] instanceof EXPECTED_INGREDIENT_INSTANCE).to.be.true;
 
           /////////////////////////
           //////// teardown ///////
@@ -112,7 +126,7 @@ describe('Product Models Unit Tests', () => {
       });
     });
 
-    describe('get #totalIngredintPrice', () => {
+    describe('get #totalProductIngredientsPrice', () => {
       it(`- should calculate the total price for all ingredients in the entire product`, async () => {
         try {
           /////////////////////////
@@ -120,17 +134,17 @@ describe('Product Models Unit Tests', () => {
           /////////////////////////
           // store expected values for
           // testing purposes/ease
-          const EXPECTED_PRODUCT_TOTAL_INGREDIENT_PRICE = 2.025;
+          const EXPECTED_PRODUCT_TOTAL__PRODUCT_INGREDIENTS_PRICE = 3.625;
 
           /////////////////////////
           ////////// test /////////
           /////////////////////////
           // execute function to be tested
-          const totalIngredientPrice = new Product(product).totalIngredientPrice;
+          const totalProductIngredientsPrice = new Product(product).totalProductIngredientsPrice;
 
           // run first batch of
           // test assertions
-          expect(totalIngredientPrice === EXPECTED_PRODUCT_TOTAL_INGREDIENT_PRICE).to.be.true;
+          expect(totalProductIngredientsPrice === EXPECTED_PRODUCT_TOTAL__PRODUCT_INGREDIENTS_PRICE).to.be.true;
 
           /////////////////////////
           //////// teardown ///////

@@ -39,10 +39,10 @@ describe('Ingredient Models Unit Tests', () => {
     // this test
     const ingredient = {
       ingredientId: uuid(),
-      name: 'Raw Hamburger',
-      price: 1.25,
-      measurementUnit: 'LB',
-      quantity: .5
+      ingredientName: 'Raw Hamburger',
+      ingredientPrice: 1.25,
+      ingredientMeasurementUnit: 'LB',
+      ingredientQuantity: .5
     };
 
     describe('#construcotr', () => {
@@ -69,17 +69,17 @@ describe('Ingredient Models Unit Tests', () => {
             newIngredient.ingredientId === EXPECTED_INGREDIENT_OBJECT.ingredientId
           ).to.be.true;
           expect(
-            newIngredient.name !== undefined &&
-            newIngredient.name === EXPECTED_INGREDIENT_OBJECT.name
+            newIngredient.ingredientName !== undefined &&
+            newIngredient.ingredientName === EXPECTED_INGREDIENT_OBJECT.ingredientName
           ).to.be.true;          expect(
-            newIngredient.price !== undefined &&
-            newIngredient.price === EXPECTED_INGREDIENT_OBJECT.price
+            newIngredient.ingredientPrice !== undefined &&
+            newIngredient.ingredientPrice === EXPECTED_INGREDIENT_OBJECT.ingredientPrice
           ).to.be.true;          expect(
-            newIngredient.measurementUnit !== undefined &&
-            newIngredient.measurementUnit === EXPECTED_INGREDIENT_OBJECT.measurementUnit
+            newIngredient.ingredientMeasurementUnit !== undefined &&
+            newIngredient.ingredientMeasurementUnit === EXPECTED_INGREDIENT_OBJECT.ingredientMeasurementUnit
           ).to.be.true;          expect(
-            newIngredient.quantity !== undefined &&
-            newIngredient.quantity === EXPECTED_INGREDIENT_OBJECT.quantity
+            newIngredient.ingredientQuantity !== undefined &&
+            newIngredient.ingredientQuantity === EXPECTED_INGREDIENT_OBJECT.ingredientQuantity
           ).to.be.true;
 
           /////////////////////////

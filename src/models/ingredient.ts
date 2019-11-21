@@ -22,10 +22,10 @@ import { dynamoDb } from '../lib/aws';
  */
 export interface IngredientInterface {
   ingredientId: string;
-  name: string;
-  measurementUnit: string
-  price: number;
-  quantity?: number;
+  ingredientName: string;
+  ingredientMeasurementUnit: string
+  ingredientPrice: number;
+  ingredientQuantity?: number;
 }
 
 /**
@@ -56,7 +56,7 @@ export class Ingredient implements IngredientInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public name: string;
+  public ingredientName: string;
 
   /**
    *
@@ -66,7 +66,7 @@ export class Ingredient implements IngredientInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public measurementUnit: string;
+  public ingredientMeasurementUnit: string;
 
   /**
    *
@@ -76,7 +76,7 @@ export class Ingredient implements IngredientInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public price: number;
+  public ingredientPrice: number;
 
   /**
    *
@@ -86,7 +86,7 @@ export class Ingredient implements IngredientInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public quantity?: number;
+  public ingredientQuantity?: number;
 
   /**
    * Creates an instance of Ingredient.
@@ -97,9 +97,10 @@ export class Ingredient implements IngredientInterface {
     Object.assign(this, {
       ...ingredient,
       ingredientId: _.get(ingredient, 'ingredientId', uuid()),
-      name: _.get(ingredient, 'name', uuid()),
-      measurementUnit: _.get(ingredient, 'measurementUnit'),
-      quantity: _.get(ingredient, 'quantity'),
+      ingredientName: _.get(ingredient, 'ingredientName'),
+      ingredientPrice: _.get(ingredient, 'ingredientPrice'),
+      ingredientMeasurementUnit: _.get(ingredient, 'ingredientMeasurementUnit'),
+      ingredientQuantity: _.get(ingredient, 'ingredientQuantity'),
     });
   }
 

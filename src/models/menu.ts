@@ -18,11 +18,96 @@ import { ProductInterface, Product } from "./product";
  *
  *
  * @export
+ * @interface MenuCategoryInterface
+ */
+export interface MenuCategoryInterface {
+  menuCategoryId: string;
+  menuCategoryName: string;
+  menuCategoryDescription: string;
+  menuCategoryProducts: ProductInterface[]
+}
+
+/**
+ *
+ *
+ * @export
+ * @class MenuCategory
+ * @implements {MenuCategoryInterface}
+ */
+@ObjectType({ description: 'Menu Category Model' })
+export class MenuCategory implements MenuCategoryInterface {
+  
+  /**
+   *
+   *
+   * @type {string}
+   * @memberof MenuCategory
+   */
+  @ScopeAuthorization(['*'])
+  @Field(_type => ID, { nullable: true })
+  public menuCategoryId: string;
+
+  /**
+   *
+   *
+   * @type {string}
+   * @memberof MenuCategory
+   */
+  @ScopeAuthorization(['*'])
+  @Field({ nullable: true })
+  public menuCategoryName: string;
+
+  /**
+   *
+   *
+   * @type {string}
+   * @memberof MenuCategory
+   */
+  @ScopeAuthorization(['*'])
+  @Field({ nullable: true })
+  public menuCategoryDescription: string;
+
+  /**
+   *
+   *
+   * @type {Product[]}
+   * @memberof MenuCategory
+   */
+  @ScopeAuthorization(['*'])
+  @Field(_type => [Product], { nullable: true })
+  public menuCategoryProducts: Product[];
+
+  /**
+   * Creates an instance of MenuCategory.
+   * @param {MenuCategoryInterface} menuCategory
+   * @memberof MenuCategory
+   */
+  public constructor(menuCategory: MenuCategoryInterface) {
+    Object.assign(this, {
+      ...menuCategory,
+      menuCategoryId: _.get(menuCategory, 'menuCategoryId'),
+      menuCategoryName: _.get(menuCategory, 'menuCategoryName'),
+      menuCategoryDescription: _.get(menuCategory, 'menuCategoryDescription'),
+      menuCategoryProducts: _.get(menuCategory, 'menuCategoryProducts', [] as ProductInterface[])
+        .map((product: ProductInterface) => {
+          return new Product({
+            ...product
+          });
+        })
+    })
+  }
+}
+
+/**
+ *
+ *
+ * @export
  * @interface MenuInterface
  */
 export interface MenuInterface {
   menuId: string;
-  products: ProductInterface[];
+  menuName: string;
+  menuCategories: MenuCategoryInterface[]
 }
 
 /**
@@ -32,7 +117,7 @@ export interface MenuInterface {
  * @class Menu
  */
 @ObjectType({ description: 'Menu Model' })
-export class Menu {
+export class Menu implements MenuInterface {
 
   /**
    *
@@ -42,27 +127,44 @@ export class Menu {
    */
   @ScopeAuthorization(['*'])
   @Field(_type => ID, { nullable: true })
-  public productId: string;
+  public menuId: string;
 
   /**
    *
    *
-   * @type {Product[]}
+   * @type {string}
    * @memberof Menu
    */
   @ScopeAuthorization(['*'])
-  @Field(_type => [Product], { nullable: true })
-  public ingredients: Product[];
+  @Field({ nullable: true })
+  public menuName: string;
 
   /**
-   *Creates an instance of Menu.
+   *
+   *
+   * @type {MenuCategory[]}
+   * @memberof Menu
+   */
+  @ScopeAuthorization(['*'])
+  @Field(_type => [MenuCategory], { nullable: true })
+  public menuCategories: MenuCategory[];
+
+  /**
+   * Creates an instance of Menu.
    * @param {MenuInterface} menu
    * @memberof Menu
    */
   public constructor(menu: MenuInterface) {
     Object.assign(this, {
       ...menu,
-      menuItem: _.get(menu, 'menuId', uuid())
+      menuId: _.get(menu, 'menuId', uuid()),
+      menuName: _.get(menu, 'menuName', uuid()),
+      menuCategories: _.get(menu, 'menuCategories', [] as MenuCategoryInterface[])
+        .map((menuCategory: MenuCategoryInterface) => {
+          return new MenuCategory({
+            ...menuCategory
+          });
+        })
     })
   }
 }

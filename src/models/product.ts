@@ -25,9 +25,9 @@ import { Ingredient, IngredientInterface } from './ingredient';
  */
 export interface ProductInterface {
   productId: string;
-  name: string;
-  ingredients: IngredientInterface[];
-  totalPrice?: number;
+  productName: string;
+  productIngredients: IngredientInterface[];
+  totalProductIngredientsPrice?: number;
 }
 
 /**
@@ -57,7 +57,7 @@ export class Product implements ProductInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public name: string;
+  public productName: string;
 
   /**
    *
@@ -67,7 +67,7 @@ export class Product implements ProductInterface {
    */
   @ScopeAuthorization(['*'])
   @Field(_type => [Ingredient], { nullable: true })
-  public ingredients: Ingredient[];
+  public productIngredients: Ingredient[];
 
   /**
    *
@@ -78,10 +78,10 @@ export class Product implements ProductInterface {
    */
   @ScopeAuthorization(['*'])
   @Field({ nullable: true })
-  public get totalIngredientPrice(): number {
-    return this.ingredients.reduce((totalIngredientPrice: number, curr: Ingredient) => {
-      totalIngredientPrice = totalIngredientPrice + (curr.price * _.get(curr, 'quantity', 0));
-      return totalIngredientPrice;
+  public get totalProductIngredientsPrice(): number {
+    return this.productIngredients.reduce((totalProductIngredientsPrice: number, curr: Ingredient) => {
+      totalProductIngredientsPrice = totalProductIngredientsPrice + (curr.ingredientPrice * _.get(curr, 'ingredientQuantity', 0));
+      return totalProductIngredientsPrice;
     }, 0);
   }
 
@@ -94,8 +94,8 @@ export class Product implements ProductInterface {
     Object.assign(this, {
       ...product,
       productId: _.get(product, 'productId', uuid()),
-      name: _.get(product, 'name', ''),
-      ingredients: _.get(product, 'ingredients', [] as IngredientInterface[])
+      productName: _.get(product, 'productName', ''),
+      productIngredients: _.get(product, 'ingredients', [] as IngredientInterface[])
         .map((ingredient: IngredientInterface) => new Ingredient(ingredient)),
     });
   }
