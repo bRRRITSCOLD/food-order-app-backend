@@ -45,7 +45,7 @@ describe('Ingredient Models Unit Tests', () => {
       ingredientQuantity: .5
     };
 
-    describe('#construcotr', () => {
+    describe('#constructor', () => {
       it('- should create and return properly mapped instance of Ingredient class', async () => {
         try {
           /////////////////////////

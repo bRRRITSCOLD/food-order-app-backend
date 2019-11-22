@@ -80,7 +80,7 @@ describe('Product Models Unit Tests', () => {
       ]
     };
 
-    describe('#construcotr', () => {
+    describe('#constructor', () => {
       it('- should create and return properly mapped instance of Product class', async () => {
         try {
           /////////////////////////

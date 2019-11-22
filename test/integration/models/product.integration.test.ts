@@ -56,13 +56,13 @@ describe('Product Models Integration Tests', () => {
     const products = [
       {
         productId: uuid(),
-        name: 'Hamburger',
-        ingredients: []
+        productName: 'Hamburger',
+        productIngredients: []
       },
       {
         productId: uuid(),
-        name: 'Raspberry White Chocolate Cheesecake',
-        ingredients: []
+        productName: 'Raspberry White Chocolate Cheesecake',
+        productIngredients: []
       }
     ];
 
@@ -91,11 +91,11 @@ describe('Product Models Integration Tests', () => {
           expect(putProduct instanceof EXPECTED_PRODUCT_INSTANCE).to.be.true;
           expect(putProduct.productId !== undefined).to.be.true;
           expect(putProduct.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
-          expect(putProduct.name !== undefined).to.be.true;
-          expect(putProduct.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(putProduct.ingredients !== undefined).to.be.true;
-          expect(putProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          expect(putProduct.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
+          expect(putProduct.productName !== undefined).to.be.true;
+          expect(putProduct.productName === EXPECTED_PRODUCT_OBJECT.productName).to.be.true;
+          expect(putProduct.productIngredients !== undefined).to.be.true;
+          expect(putProduct.productIngredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+          expect(putProduct.productIngredients.length === EXPECTED_PRODUCT_OBJECT.productIngredients.length).to.be.true;
 
           // scan dynamo for the created
           // product item
@@ -113,11 +113,11 @@ describe('Product Models Integration Tests', () => {
           // test assertions
           expect(putProduct.productId !== undefined).to.be.true;
           expect(putProduct.productId === EXPECTED_PRODUCT_OBJECT.productId).to.be.true;
-          expect(putProduct.name !== undefined).to.be.true;
-          expect(putProduct.name === EXPECTED_PRODUCT_OBJECT.name).to.be.true;
-          expect(putProduct.ingredients !== undefined).to.be.true;
-          expect(putProduct.ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-          expect(putProduct.ingredients.length === EXPECTED_PRODUCT_OBJECT.ingredients.length).to.be.true;
+          expect(putProduct.productName !== undefined).to.be.true;
+          expect(putProduct.productName === EXPECTED_PRODUCT_OBJECT.productName).to.be.true;
+          expect(putProduct.productIngredients !== undefined).to.be.true;
+          expect(putProduct.productIngredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+          expect(putProduct.productIngredients.length === EXPECTED_PRODUCT_OBJECT.productIngredients.length).to.be.true;
 
           /////////////////////////
           //////// teardown ///////
@@ -206,13 +206,13 @@ describe('Product Models Integration Tests', () => {
             expect(fetchedProducts[i] instanceof EXPECTED_PRODUCT_INSTANCE).to.be.true;
             expect(fetchedProducts[i].productId !== undefined).to.be.true;
             expect(fetchedProducts[i].productId === foundExpectedProduct.productId).to.be.true;
-            expect(fetchedProducts[i].name !== undefined).to.be.true;
-            expect(fetchedProducts[i].name === foundExpectedProduct.name).to.be.true;
-            expect(fetchedProducts[i].price !== undefined).to.be.true;
-            expect(fetchedProducts[i].price === foundExpectedProduct.price).to.be.true;
-            expect(fetchedProducts[i].ingredients !== undefined).to.be.true;
-            expect(fetchedProducts[i].ingredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
-            expect(fetchedProducts[i].ingredients.length === foundExpectedProduct.ingredients.length).to.be.true;
+            expect(fetchedProducts[i].productName !== undefined).to.be.true;
+            expect(fetchedProducts[i].productName === foundExpectedProduct.productName).to.be.true;
+            expect(fetchedProducts[i].productPrice !== undefined).to.be.true;
+            expect(fetchedProducts[i].productPrice === foundExpectedProduct.productPrice).to.be.true;
+            expect(fetchedProducts[i].productIngredients !== undefined).to.be.true;
+            expect(fetchedProducts[i].productIngredients instanceof EXPECTED_ARRAY_INSTANCE).to.be.true;
+            expect(fetchedProducts[i].productIngredients.length === foundExpectedProduct.productIngredients.length).to.be.true;
           }
 
           /////////////////////////
